@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Backend Assignment – Role-Based API (Mock Data)
 
-## Getting Started
+## Overview
 
-First, run the development server:
+This project is a minimal **Next.js (App Router)** backend-focused application created as part of a technical assignment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The objective is to demonstrate:
+- Backend API structure in Next.js
+- Simple authentication and role-based authorization
+- Clean, readable code organization
+- Thoughtful separation of concerns
+
+To keep the focus on logic and structure, **mock in-memory data** is used instead of a database.
+
+---
+
+## Tech Stack
+
+- Next.js (App Router)
+- TypeScript
+- Node.js
+- Mock in-memory data
+- Postman (for API testing)
+
+---
+
+## Project Structure
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── protected/
+│   │   │   └── route.ts
+│   └── page.tsx
+├── lib/
+│   └── auth.ts
+├── └── users.ts
+└── types/
+    └── user.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Structure Rationale
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **`app/api/*`**  
+  Contains API routes using the Next.js App Router pattern.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **`data/`**  
+  Centralized mock data layer to simulate a database.
 
-## Learn More
+- **`lib/`**  
+  Reusable business logic such as authentication and role checks.
 
-To learn more about Next.js, take a look at the following resources:
+- **`types/`**  
+  Explicit TypeScript interfaces to avoid implicit contracts.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## User Model
 
-## Deploy on Vercel
+The application uses a simple user model:
+```ts
+{
+  id: number
+  name: string
+  role: "admin" | "user"
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This model is defined in `types/user.ts` and reused across the application.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Mock Data Layer
+
+Mock users are defined in:
+```
+src/data/users.mock.ts
+```
+
+Example:
+```ts
+export const users = [
+  { id: 1, name: "Alice", role: "admin" },
+  { id: 2, name: "Bob", role: "user" }
+]
+```
+
+This structure allows easy replacement with a real database later.
+
+---
+
+## API Endpoints
+
+### GET `/api/protected`
+
+A protected route that only allows access to users with the `admin` role.
+
+**Required Header:**
+```
+x-user-id: 1
+```
+
+**Success Response:**
+```json
+{
+    "message": "Protected data",
+    "user": {
+        "id": "1",
+        "name": "Alice",
+        "role": "ADMIN"
+    }
+}
+```
+
+**Unauthorized/Forbidden Response:**
+```json
+{
+    "error": "Forbidden"
+}
+```
+
+---
+
+## Running the Project Locally
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Start the development server
+```bash
+npm run dev
+```
+
+### Access the app
+```
+http://localhost:3000
+```
+
+---
+
+## Testing the API
+
+The APIs can be tested using **Postman**.
+
+**Example request:**
+```
+GET http://localhost:3000/api/protected
+Header: x-user-id: 1
+```
+
+Screenshots of Postman requests and responses can be added below.
+
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+---
+
+## Future Enhancements
+
+- Replace mock data with a real database (PostgreSQL, MongoDB, etc.)
+- Implement JWT-based authentication
+- Add input validation and error handling middleware
+- Add unit tests
+
+---
